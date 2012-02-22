@@ -24,6 +24,7 @@ require 'etsy/category'
 require 'etsy/payment_template'
 require 'etsy/country'
 require 'etsy/shipping_template'
+require 'etsy/featured_treasury'
 require 'etsy/treasury'
 require 'etsy/treasury_listing'
 
