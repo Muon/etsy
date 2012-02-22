@@ -24,6 +24,8 @@ require 'etsy/category'
 require 'etsy/payment_template'
 require 'etsy/country'
 require 'etsy/shipping_template'
+require 'etsy/treasury'
+require 'etsy/treasury_listing'
 
 # = Etsy: A friendly Ruby interface to the Etsy API
 #
