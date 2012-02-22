@@ -75,24 +75,24 @@ module Etsy
 
       should "be able to generate detailed association queries" do
         r = Request.new('/foo')
-        r.association(:resource => 'lightning').should == 'Lightning'
+        r.association(:resource => 'Lightning').should == 'Lightning'
       end
 
       should "be able to specify fields in association query" do
         r = Request.new('/foo')
-        params = {:resource => 'lightning', :fields => ['one', 'two']}
+        params = {:resource => 'Lightning', :fields => ['one', 'two']}
         r.association(params).should == 'Lightning(one,two)'
       end
 
       should "be able to specify limit in association query" do
         r = Request.new('/foo')
-        params = {:resource => 'lightning', :limit => 3}
+        params = {:resource => 'Lightning', :limit => 3}
         r.association(params).should == 'Lightning:3:0'
       end
 
       should "be able to specify offset in association query" do
         r = Request.new('/foo')
-        params = {:resource => 'lightning', :offset => 7}
+        params = {:resource => 'Lightning', :offset => 7}
         r.association(params).should == 'Lightning:25:7'
       end
 
@@ -100,8 +100,8 @@ module Etsy
         params = {
           :a => 'b',
           :includes => [
-            {:resource => 'lightning'},
-            {:resource => 'thunder'}
+            {:resource => 'Lightning'},
+            {:resource => 'Thunder'}
           ]
         }
         r = Request.new('/foo', params)

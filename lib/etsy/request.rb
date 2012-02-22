@@ -74,7 +74,7 @@ module Etsy
     end
 
     def association(options={}) # :nodoc:
-      s = options[:resource].capitalize
+      s = options[:resource]
       s << "(#{fields_from(options[:fields])})" if options[:fields]
       if options[:limit] || options[:offset]
         options[:limit] ||= 25
