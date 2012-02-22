@@ -19,6 +19,12 @@ module Etsy
     attribute :thumbnail, :from => :url_570xN
     attribute :full, :from => :url_fullxfull
 
+    # Fetch an image by id for a given listing.
+    #
+    def self.find_by_listing_id_and_image_id(listing_id, *identifiers_and_options)
+      find_one_or_more("listings/#{listing_id}/images", identifiers_and_options)
+    end
+
     # Fetch all images for a given listing.
     #
     def self.find_all_by_listing_id(listing_id)
