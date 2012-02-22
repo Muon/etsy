@@ -4,8 +4,16 @@ module Etsy
     module ClassMethods
 
       def attribute(name, options = {})
+        from = options.fetch(:from, name).to_s
+
+        if name == :id
+          define_method :id_field do
+            from
+          end
+        end
+
         define_method name do
-          @result[options.fetch(:from, name).to_s]
+          result[from]
         end
       end
 
@@ -13,10 +21,20 @@ module Etsy
         names.each {|name| attribute(name) }
       end
 
-      # FIXME: not quite sure where I'm going with this yet. KO.
       def association(name, options = {})
-        define_method "associated_#{name}" do
-          @result[options.fetch(:from, name).to_s]
+        from = (options.delete(:from) || name).to_s
+        class_name = (options.delete(:class) || from).to_s
+        define_method name do
+          unless result[from]
+            opts = { :includes => from, :fields => id_field }.merge(oauth_info).merge(options)
+            result[from] = self.class.find(id, opts).send(:result)[from]
+          end
+
+          if result[from].is_a? Array
+            result[from].map { |x| Etsy.const_get(class_name).new(x, token, secret) }
+          else
+            Etsy.const_get(class_name).new(result[from], token, secret)
+          end
         end
       end
 
@@ -77,6 +95,10 @@ module Etsy
 
     def result
       @result
+    end
+
+    def oauth_info
+      (token && secret) ? { :access_token => token, :access_secret => secret } : {}
     end
 
     def self.included(other)

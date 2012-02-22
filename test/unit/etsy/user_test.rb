@@ -109,25 +109,25 @@ module Etsy
         end
 
         should "make a call to the API to retrieve it if requested" do
-          User.expects(:find).with('littletjane', @options).returns @user_with_profile
+          User.expects(:find).with(5327518, @options).returns @user_with_profile
           @user_without_profile.profile
         end
 
         should "not call the api twice" do
-          User.expects(:find).once.with('littletjane', @options).returns @user_with_profile
+          User.expects(:find).once.with(5327518, @options).returns @user_with_profile
           @user_without_profile.profile
           @user_without_profile.profile
         end
 
         should "return a populated profile instance" do
-          User.stubs(:find).with('littletjane', @options).returns @user_with_profile
+          User.stubs(:find).with(5327518, @options).returns @user_with_profile
           @user_without_profile.profile.bio.should == 'I make stuff'
         end
 
         should "make the call with authentication if oauth is used" do
           user = User.new(@data_without_profile.first, 'token', 'secret')
           oauth = {:access_token => 'token', :access_secret => 'secret'}
-          User.expects(:find).with('littletjane', @options.merge(oauth)).returns @user_with_profile
+          User.expects(:find).with(5327518, @options.merge(oauth)).returns @user_with_profile
           user.profile
         end
       end
@@ -153,15 +153,6 @@ module Etsy
 
         user.created_at.should == Time.at(1)
       end
-    end
-
-    should "know the shop for a user" do
-      user = User.new
-      user.stubs(:username).with().returns('username')
-
-      Shop.stubs(:find).with('username', {}).returns('shop')
-
-      user.shop.should == 'shop'
     end
 
     should "know the addresses for a user" do

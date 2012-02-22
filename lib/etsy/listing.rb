@@ -45,7 +45,8 @@ module Etsy
     attributes :title, :description, :state, :url, :price, :quantity,
                :tags, :materials, :hue, :saturation, :brightness, :is_black_and_white
 
-    association :image, :from => 'Images'
+    association :images, :from => 'Images', :class => 'Image'
+    association :main_image, :from => 'MainImage', :class => 'Image'
 
     def self.create(options = {})
       options.merge!(:require_secure => true)
@@ -109,16 +110,10 @@ module Etsy
       get_all("/listings/active", options)
     end
 
-    # The collection of images associated with this listing.
-    #
-    def images
-      @images ||= Image.find_all_by_listing_id(id)
-    end
-
     # The primary image for this listing.
     #
     def image
-      images.first
+      main_image
     end
 
     def black_and_white?
