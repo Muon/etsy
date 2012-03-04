@@ -70,7 +70,7 @@ module Etsy
       should "be able make simplified association requests" do
         r = Request.new('/foo', {:includes => ['Thunder', 'Lightning']})
         r.stubs(:parameters).with().returns({:a => :b})
-        r.query.should == 'a=b&includes=Thunder,Lightning'
+        r.query.should == 'a=b&includes=Thunder%2CLightning'
       end
 
       should "be able to generate detailed association queries" do
@@ -107,7 +107,7 @@ module Etsy
         r = Request.new('/foo', params)
         r.stubs(:base_path).with().returns('/base')
         r.stubs(:parameters).with().returns(:a => 'b')
-        r.endpoint_url.should == '/base/foo?a=b&includes=Lightning,Thunder'
+        r.endpoint_url.should == '/base/foo?a=b&includes=Lightning%2CThunder'
       end
 
       should "be able to determine the endpoint URI when in read-only mode" do
@@ -167,6 +167,20 @@ module Etsy
         r.stubs(:client).returns(client)
 
         r.get.should == 'response'
+      end
+
+      should "not modify the options hash passed to it" do
+        options = { :includes => 'Lightning',
+                    :access_token => 'token',
+                    :access_secret => 'secret',
+                    :fields => [:id],
+                    limit: 100,
+                    offset: 100 }
+        options_copy = options.dup
+
+        Request.new('', options)
+
+        options.should == options_copy
       end
 
     end
