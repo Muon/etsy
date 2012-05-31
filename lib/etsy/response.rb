@@ -61,10 +61,10 @@ module Etsy
     end
 
     def check_data!
-      raise OAuthTokenRevoked if data == "oauth_problem=token_revoked"
-      raise MissingShopID if data =~ /Shop with PK shop_id/
-      raise InvalidUserID if data =~ /is not a valid user_id/
-      raise TemporaryIssue if data =~ /Temporary Etsy issue|Resource temporarily unavailable|You have exceeded/
+      raise OAuthTokenRevoked         if data == "oauth_problem=token_revoked"
+      raise MissingShopID             if data =~ /Shop with PK shop_id/
+      raise InvalidUserID             if data =~ /is not a valid user_id/
+      raise TemporaryIssue            if data =~ /Temporary Etsy issue|Resource temporarily unavailable|You have exceeded/
       raise EtsyJSONInvalid.new(data) unless valid_json?
       true
     end
@@ -72,7 +72,7 @@ module Etsy
     def valid_json?
       json
       return true
-    rescue Exception => e
+    rescue JSON::ParserError
       return false
     end
 
