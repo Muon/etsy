@@ -111,6 +111,10 @@ module Etsy
       get_all("/listings/active", options)
     end
 
+    def self.currently_featured_listings(*options)
+      get_all("/featured_treasuries/listings/homepage_current", *options)
+    end
+
     # The primary image for this listing.
     #
     def image
