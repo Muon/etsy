@@ -47,6 +47,7 @@ module Etsy
 
     association :images, :from => 'Images', :class => 'Image'
     association :main_image, :from => 'MainImage', :class => 'Image'
+    association :shop, :from => 'Shop'
 
     def self.create(options = {})
       options.merge!(:require_secure => true)
