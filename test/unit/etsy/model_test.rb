@@ -9,6 +9,7 @@ module Etsy
     context 'An instance of a Model' do
       def mock_empty_request(options = {})
         body = options.delete(:body) { '{}' }
+        body = JSON.parse(body).merge({ params: options }).to_json
         Request.expects(:new).with('', options).returns(stub(:get => stub(:body => body, :code => 200)))
       end
 
@@ -18,18 +19,18 @@ module Etsy
       end
 
       should 'perform only one request if :limit is less than 100' do
-        mock_empty_request(:limit => 10, :offset => 0).once
+        mock_empty_request(:limit => 10, :offset => 0, :body => '{"count": 100}').once
         TestModel.get_all('', :limit => 10)
       end
 
       should 'perform only one request if :limit is equal to 100' do
-        mock_empty_request(:limit => 100, :offset => 0).once
+        mock_empty_request(:limit => 100, :offset => 0, :body => '{"count": 150}').once
         TestModel.get_all('', :limit => 100)
       end
 
       should 'perform multiple requests if :limit is greater than 100' do
-        mock_empty_request(:limit => 100, :offset => 0).once
-        mock_empty_request(:limit => 50, :offset => 100).once
+        mock_empty_request(:limit => 100, :offset => 0, :body => '{"count": 200}').once
+        mock_empty_request(:limit => 50, :offset => 100, :body => '{"count": 200}').once
 
         TestModel.get_all('', :limit => 150)
       end
@@ -53,7 +54,7 @@ module Etsy
         body = '{"count": 210}'
         mock_empty_request(:limit => 100, :offset => 0, :body => body).once
         mock_empty_request(:limit => 100, :offset => 100, :body => body).once
-        mock_empty_request(:limit => 10, :offset => 200, :body => body).once
+        mock_empty_request(:limit => 100, :offset => 200, :body => body).once
 
         TestModel.get_all('', :limit => :all)
       end

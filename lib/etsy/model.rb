@@ -53,32 +53,25 @@ module Etsy
         limit = options[:limit]
 
         if limit
-          initial_offset = options.fetch(:offset, 0)
+          offset = options.fetch(:offset, 0)
           batch_size = options.fetch(:batch_size, 100)
 
           result = []
 
           if limit == :all
-            response = Request.get(endpoint, options.merge(:limit => batch_size, :offset => initial_offset))
-            result << response.result
-            limit = [response.count - batch_size - initial_offset, 0].max
-            initial_offset += batch_size
-          end
-
-          num_batches = limit / batch_size
-
-          num_batches.times do |batch|
-            total_offset = initial_offset + batch * batch_size
-            response = Request.get(endpoint, options.merge(:limit => batch_size, :offset => total_offset))
-            result << response.result
-          end
-
-          remainder = limit % batch_size
-
-          if remainder > 0
-            total_offset = initial_offset + num_batches * batch_size
-            response = Request.get(endpoint, options.merge(:limit => remainder, :offset => total_offset))
-            result << response.result
+            begin
+              response = Request.get(endpoint, options.merge(:limit => batch_size, :offset => offset))
+              result << response.result
+              offset = response.next_offset
+            end while offset
+          elsif limit > 0
+            batch_size = [batch_size, limit].min
+            begin
+              response = Request.get(endpoint, options.merge(:limit => batch_size, :offset => offset))
+              result << response.result
+              offset = response.next_offset
+              batch_size = [batch_size, limit - offset].min if offset
+            end while offset and offset < limit
           end
         else
           response = Request.get(endpoint, options)

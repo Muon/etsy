@@ -58,6 +58,17 @@ module Etsy
       !!to_hash['pagination']
     end
 
+    def next_offset
+      if paginated?
+        to_hash['pagination']['next_offset']
+      else
+        candidate_offset = to_hash['params'].fetch('limit', 25) + to_hash['params'].fetch('offset', 0)
+        if candidate_offset < to_hash['count']
+          candidate_offset
+        end
+      end
+    end
+
     private
 
     def data
