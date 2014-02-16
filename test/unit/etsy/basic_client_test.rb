@@ -6,8 +6,10 @@ module Etsy
     context "An instance of the BasicClient class" do
 
       should "be able to construct a client" do
-        client = BasicClient.new('example.com')
-        Net::HTTP.stubs(:new).with('example.com').returns('client')
+        Etsy.stubs(:host).returns 'example.com'
+        Etsy.stubs(:protocol).returns 'http'
+        client = BasicClient.new
+        Net::HTTP.stubs(:new).with('example.com', 80).returns('client')
 
         client.client.should == 'client'
       end
@@ -16,7 +18,7 @@ module Etsy
         http_client = stub()
         http_client.stubs(:get).with('endpoint').returns('response')
 
-        client = BasicClient.new('')
+        client = BasicClient.new
         client.stubs(:client).returns(http_client)
 
         client.get('endpoint').should == 'response'

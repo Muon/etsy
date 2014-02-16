@@ -91,7 +91,7 @@ module Etsy
   end
   
   def self.protocol
-    @protocol || "http"
+    @protocol || "https"
   end
 
   # The currently configured environment.
